@@ -1,0 +1,43 @@
+.testcase-container {
+  margin-top: 20px;
+}
+
+.testcase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.testcase-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.testcase-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.test-case-card {
+  border-radius: 10px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.test-case-checkbox {
+  display: block;
+  width: 100%;
+}
+
+.test-case-content {
+  margin-top: 10px;
+}
+
+.test-case-section {
+  margin-top: 6px;
+}

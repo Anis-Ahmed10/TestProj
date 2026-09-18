@@ -1,0 +1,530 @@
+/* ── Container ───────────────────────────────────────────────────────────── */
+.user-story-container {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.user-story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fafafa;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.user-story-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.user-story-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.user-story-subtitle {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 3px;
+  margin-bottom: 0;
+}
+
+.project-select {
+  appearance: none;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 8px 36px 8px 14px;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+  min-width: 240px;
+}
+
+.project-select:hover {
+  border-color: #9ca3af;
+}
+
+.project-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────────────────── */
+.usi-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  background: #fafafa;
+  padding: 0 20px;
+  gap: 0;
+}
+
+.usi-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 20px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #6b7280;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.usi-tab:hover {
+  color: #374151;
+}
+
+.usi-tab.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  font-weight: 600;
+}
+
+.usi-tab-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ── Tab body ────────────────────────────────────────────────────────────── */
+.usi-tab-body {
+  display: grid;
+  padding: 0;
+}
+
+/* All panels share the same grid cell so the container height = tallest panel */
+.usi-tab-body > * {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.usi-panel-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Jira slot: top-align content within the fixed height */
+.usi-slot-jira {
+  justify-content: flex-start;
+}
+
+/* ADO slot: vertically center too */
+.usi-slot-ado {
+  justify-content: center;
+}
+
+.usi-panel {
+  display: flex;
+  margin: 20px;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.usi-panel-center {
+  align-items: center;
+  text-align: center;
+}
+
+.usi-panel-hint {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.usi-status-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 420px;
+}
+
+.usi-status-filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.usi-action-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.usi-action-row .ant-btn {
+  height: 42px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 0 20px;
+}
+
+.usi-success-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #15803d;
+}
+
+/* ── Excel / CSV panel ───────────────────────────────────────────────────── */
+.usi-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 2px dashed #d1d5db;
+  border-radius: 10px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition:
+    border-color 0.18s,
+    background 0.18s;
+  text-align: center;
+}
+
+.usi-dropzone:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.usi-dropzone.uploaded {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  cursor: default;
+}
+
+.usi-dropzone.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.usi-dropzone-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.usi-dropzone-link {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.usi-dropzone-formats {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.usi-excel-columns {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.usi-col-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+
+.usi-col-chip {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ── Story Guidelines panel ──────────────────────────────────────────────── */
+.usi-guide-wrap {
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f5f7ff;
+}
+
+.usi-guide-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: #1e3a8a;
+  transition: background 0.15s;
+}
+
+.usi-guide-header:hover {
+  background: #eef2ff;
+}
+
+.usi-guide-icon {
+  font-size: 14px;
+  color: #4f46e5;
+  flex-shrink: 0;
+}
+
+.usi-guide-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.usi-guide-subtitle {
+  font-size: 12px;
+  color: #6366f1;
+  margin-left: 2px;
+}
+
+.usi-guide-chevron {
+  margin-left: auto;
+  font-size: 11px;
+  color: #6366f1;
+}
+
+.usi-guide-body {
+  border-top: 1px solid #e0e7ff;
+  padding: 16px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.usi-guide-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.usi-guide-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6366f1;
+  margin: 0;
+}
+
+/* Structure grid */
+.usi-guide-structure {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usi-guide-struct-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.usi-guide-struct-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e3a8a;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+
+.usi-guide-struct-desc {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* Example block */
+.usi-guide-example {
+  background: #fff;
+  border: 1px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.usi-guide-example-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.usi-guide-story-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: #eff6ff;
+  border-left: 3px solid #4f46e5;
+  border-radius: 0 6px 6px 0;
+}
+
+.usi-guide-story-line {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.usi-guide-story-keyword {
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.usi-guide-ac-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usi-guide-ac-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.usi-guide-ac-id {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: #4f46e5;
+  border-radius: 4px;
+  padding: 1px 6px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.usi-guide-ac-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin: 0 0 2px;
+}
+
+.usi-guide-ac-body {
+  font-size: 12px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Tips */
+.usi-guide-tips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usi-guide-tip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.usi-guide-tip-icon {
+  color: #22c55e;
+  font-size: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Upload list styling */
+.usi-panel .ant-upload-list {
+  margin-top: 6px;
+}
+
+.usi-panel .ant-upload-list-item {
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.usi-panel .ant-upload-wrapper {
+  width: 100%;
+}
+
+/* ── ADO panel ───────────────────────────────────────────────────────────── */
+.usi-not-connected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.usi-not-connected-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.usi-not-connected-desc {
+  font-size: 12.5px;
+  color: #6b7280;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.usi-not-connected .ant-btn {
+  height: 36px;
+  font-size: 13px;
+  border-radius: 8px;
+  padding: 0 16px;
+  margin-top: 2px;
+}

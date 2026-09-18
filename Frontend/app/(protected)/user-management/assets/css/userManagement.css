@@ -1,0 +1,530 @@
+/* ── User Management Page ── */
+.um-page {
+  padding: 28px 40px;
+  min-height: 100%;
+  background: #f8fafc;
+}
+
+@media (max-width: 768px) {
+  .um-page {
+    padding: 20px 16px;
+  }
+}
+
+/* ── Page header ── */
+.um-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ── Section toolbar (search + count row) ── */
+.um-section__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Add User button ── */
+.um-page__add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  background-color: #1f3333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.um-page__add-btn:hover {
+  background-color: #2d4a4a;
+  box-shadow: 0 2px 8px rgba(31, 51, 51, 0.25);
+}
+
+/* ── Section card ── */
+.um-section {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.um-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f3f4f6;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.um-section__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.um-section__count {
+  font-size: 13px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* ── Table ── */
+.um-table-wrapper {
+  overflow-x: auto;
+}
+
+.um-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.um-table thead {
+  background: #f9fafb;
+}
+
+.um-table thead th {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.um-table tbody tr {
+  transition: background 0.12s;
+}
+
+.um-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.um-table tbody tr + tr {
+  border-top: 1px solid #f3f4f6;
+}
+
+.um-table td {
+  padding: 14px 20px;
+  color: #374151;
+  vertical-align: middle;
+}
+
+/* ── User cell ── */
+.um-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.um-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f5c54 0%, #2d6e64 100%);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.um-user-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+}
+
+/* ── Email cell ── */
+.um-email {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* ── Role badge ── */
+.um-role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.um-role-badge--admin {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.um-role-badge--lead {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.um-role-badge--engineer {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.um-role-badge--default {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* ── Actions cell ── */
+.um-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    border-color 0.12s,
+    color 0.12s;
+}
+
+.um-edit-btn:hover {
+  background: #1f3333;
+  border-color: #1f3333;
+  color: #ffffff;
+}
+
+/* ── Loading & empty state ── */
+.um-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 12px;
+}
+
+.um-loading__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #1f3333;
+  border-radius: 50%;
+  animation: um-spin 0.7s linear infinite;
+}
+
+@keyframes um-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.um-loading__text {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.um-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 8px;
+  text-align: center;
+}
+
+.um-empty__icon {
+  font-size: 36px;
+  color: #d1d5db;
+  margin-bottom: 4px;
+}
+
+.um-empty__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.um-empty__text {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ── Modal overlay ── */
+.um-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Modal ── */
+.um-modal {
+  background: #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  animation: um-modal-in 0.18s ease;
+}
+
+@keyframes um-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.um-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.um-modal__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.um-modal__close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #f3f4f6;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 14px;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+
+.um-modal__close-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.um-modal__body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.um-modal__user-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.um-modal__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f5c54 0%, #2d6e64 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.um-modal__user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.um-modal__user-email {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.um-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.um-modal__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.um-modal__current-role {
+  font-size: 13px;
+  color: #6b7280;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+.um-modal__select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.um-modal__select:focus {
+  border-color: #1f3333;
+  box-shadow: 0 0 0 3px rgba(31, 51, 51, 0.1);
+}
+
+.um-modal__error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.um-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.um-modal__cancel-btn {
+  padding: 8px 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    border-color 0.12s;
+}
+
+.um-modal__cancel-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.um-modal__save-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #1f3333;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    box-shadow 0.12s;
+}
+
+.um-modal__save-btn:hover:not(:disabled) {
+  background: #2d4a4a;
+  box-shadow: 0 2px 8px rgba(31, 51, 51, 0.25);
+}
+
+.um-modal__save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Ant Design Tabs overrides ── */
+.um-antd-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1f3333 !important;
+  font-weight: 700;
+}
+
+.um-antd-tabs .ant-tabs-ink-bar {
+  background: #1f3333 !important;
+}
+
+.um-antd-tabs .ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: #1f3333 !important;
+}
+
+.um-antd-tabs .ant-tabs-tab-btn {
+  font-size: 13px;
+  font-weight: 600;
+}

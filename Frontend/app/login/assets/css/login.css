@@ -1,0 +1,98 @@
+.login-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    ellipse at 30% 50%,
+    #2d8a7c 0%,
+    #1b5c50 40%,
+    #0b2e28 100%
+  );
+  padding: 24px;
+}
+
+.login-card {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.login-card__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 36px 28px;
+}
+
+.login-card__icon {
+  width: 64px;
+  height: 64px;
+  background: #1f5c54;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card__title {
+  margin: 0;
+  color: #0f2623;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.login-card__subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.login-card__footer {
+  text-align: center;
+  font-size: 12px;
+  color: #9ca3af;
+  padding: 8px 0 28px;
+  margin: 0;
+}
+
+.login-demo-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 36px 20px;
+  padding: 10px 14px;
+  background: #e8f5f3;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1f5c54;
+}
+
+.login-demo-banner__icon {
+  flex-shrink: 0;
+  font-style: normal;
+}
+
+/* Strip Amplify's own card chrome — .login-card provides the card styling */
+[data-amplify-authenticator] {
+  display: block !important;
+  min-height: unset !important;
+  width: 100%;
+  background: transparent !important;
+}
+
+[data-amplify-authenticator] [data-amplify-router] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+[data-amplify-authenticator] [data-amplify-form] {
+  padding: 0 36px 8px;
+}

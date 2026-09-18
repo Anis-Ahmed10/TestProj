@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Font variables */
+.font-sans {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-mono), monospace;
+}
+
+/* Document Upload & Delete Confirmation Modals */
+.cdp-confirm-modal-content {
+  font-family: inherit;
+  padding: 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cdp-confirm-modal-desc {
+  font-size: 14px;
+  color: #475569;
+  margin: 0 0 4px 0;
+  line-height: 1.5;
+}
+
+.cdp-confirm-table-wrapper {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+  background-color: #f8fafc !important;
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.cdp-confirm-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-size: 13px !important;
+  margin: 0 !important;
+}
+
+.cdp-confirm-table th,
+.cdp-confirm-table td {
+  padding: 10px 14px !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  border-right: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+.cdp-confirm-table th:last-child,
+.cdp-confirm-table td:last-child {
+  border-right: none !important;
+}
+
+.cdp-confirm-table tr:last-child td {
+  border-bottom: none !important;
+}
+
+.cdp-confirm-table th {
+  font-weight: 600 !important;
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.cdp-confirm-table thead th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1 !important;
+}
+
+.cdp-confirm-table td.file-name {
+  word-break: break-all !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+}
+
+.cdp-confirm-table td.file-type {
+  color: #475569 !important;
+}
+
+.cdp-confirm-table td.file-size {
+  color: #475569 !important;
+  white-space: nowrap !important;
+  text-align: right !important;
+}
+
+.cdp-confirm-table th.align-right {
+  text-align: right !important;
+}
+
+.cdp-confirm-warn-box {
+  font-size: 13px !important;
+  color: #991b1b !important;
+  background-color: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  padding: 10px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+}
+
+.cdp-confirm-info-box {
+  font-size: 13px !important;
+  color: #1e293b !important;
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 10px 14px !important;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+}

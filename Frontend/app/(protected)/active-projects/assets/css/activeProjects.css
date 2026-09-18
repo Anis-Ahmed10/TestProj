@@ -1,0 +1,39 @@
+.active-projects-page {
+  padding: 28px 32px;
+  min-height: 100%;
+}
+
+.active-projects-page__toolbar {
+  margin-bottom: 20px;
+}
+
+.active-projects-table__project-link {
+  font-weight: 600;
+  color: #1f3333;
+}
+
+.active-projects-table__project-link:hover {
+  color: #16a34a;
+  text-decoration: underline;
+}
+
+.active-projects-table__row-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.active-projects-table__row-arrow:hover {
+  color: #1f3333;
+}
+
+.active-projects-table__row:hover {
+  background-color: #f9fafb;
+}
+
+@media (max-width: 768px) {
+  .active-projects-page {
+    padding: 20px 16px;
+  }
+}

@@ -1,0 +1,16 @@
+export const PLACEHOLDERS = {
+  university_name: "UNIVERSITY_NAME",
+  student_id: "STUDENT_ID",
+  employee_id: "EMPLOYEE_ID",
+  course_code: "COURSE_CODE",
+  class_section: "CLASS_SECTION",
+  academic_record: "ACADEMIC_RECORD",
+  financial_info: "FINANCIAL_INFO",
+  scholarship_id: "SCHOLARSHIP_ID",
+  internal_system: "INTERNAL_SYSTEM",
+  system_url: "SYSTEM_URL",
+  location_detail: "LOCATION_DETAIL",
+  research_data: "RESEARCH_DATA",
+  sensitive_record: "SENSITIVE_RECORD",
+  event_participation: "EVENT_PARTICIPATION",
+};
