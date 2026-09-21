@@ -50,11 +50,11 @@ router = APIRouter(tags=["File Operations"])
     error_message="Unable to check for duplicate file right now.",
 )
 async def check_duplicate(
-    body: DuplicateCheckRequest,
+    payload: DuplicateCheckRequest,
     service: Annotated[FileOperationsService, Depends(get_file_operations_service)],
     current_user_id: Annotated[UUID, Depends(get_current_user_id)],
 ) -> SuccessResponse[DuplicateCheckResponse]:
-    result = service.check_duplicate(file_hash=body.file_hash, entity_id=body.entity_id)
+    result = service.check_duplicate(file_hash=payload.file_hash, entity_id=payload.entity_id)
     return SuccessResponse(message=result.message, data=result)
 
 
@@ -105,7 +105,7 @@ async def list_documents(
     service: Annotated[FileOperationsService, Depends(get_file_operations_service)],
     current_user_id: Annotated[UUID, Depends(get_current_user_id)],
 ):
-    result = service.list_documents(entity_id=entity_id)
+    result = service.list_documents(entity_id=str(entity_id))
     return SuccessResponse(
         message="Documents retrieved successfully",
         data=result,

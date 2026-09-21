@@ -2,14 +2,28 @@ import uuid
 from unittest.mock import MagicMock, patch
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
+from app.api.dependencies import (
+    get_current_user,
+    get_file_operations_service,
+    get_request_authorizer,
+)
 from app.api.v1.endpoints.file_operations import (
     check_duplicate,
     confirm_upload,
+)
+from app.api.v1.endpoints.file_operations import delete_document as delete_document_endpoint
+from app.api.v1.endpoints.file_operations import (
     generate_presigned_url,
     list_documents,
 )
-from app.core.exceptions import AppException
+from app.api.v1.endpoints.file_operations import router as file_operations_router
+from app.api.v1.router import api_router
+from app.components.authorizer import AuthenticatedUser
+from app.core.connection import get_db
+from app.core.exceptions import AppException, ResourceNotFoundError
 from app.schemas.file_operations import (
     ConfirmUploadRequest,
     DocumentListResponse,
@@ -21,6 +35,7 @@ from app.schemas.file_operations import (
 
 FILE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
 ENTITY_ID = "entity-abc123"
+VALID_ENTITY_UUID = "11111111-1111-1111-1111-111111111111"
 
 
 @pytest.fixture
@@ -32,6 +47,38 @@ def mock_service():
 
 _DUMMY_USER_ID = uuid.UUID("00000000-0000-0000-0000-000000000001")
 
+_STUB_USER = AuthenticatedUser(
+    id=_DUMMY_USER_ID,
+    name="Test User",
+    email="test@example.com",
+    role="admin",
+    is_active=True,
+)
+
+
+class _StubAuthorizer:
+    def has_permission(self, *_args, **_kwargs) -> bool:
+        return True
+
+
+@pytest.fixture
+def test_client(mock_service):
+    app = FastAPI()
+    app.include_router(file_operations_router)
+    app.dependency_overrides[get_current_user] = lambda: _STUB_USER
+    app.dependency_overrides[get_request_authorizer] = lambda: _StubAuthorizer()
+    app.dependency_overrides[get_db] = lambda: MagicMock()
+    app.dependency_overrides[get_file_operations_service] = lambda: mock_service
+
+    with (
+        patch("app.api.dependencies.get_visible_client_ids", return_value=None),
+        patch("app.api.dependencies.get_visible_programme_ids", return_value=None),
+        patch("app.api.dependencies.get_visible_project_ids", return_value=None),
+    ):
+        yield TestClient(app)
+
+    app.dependency_overrides.clear()
+
 
 @patch("app.utils.audit_log.create_log_entry")
 @pytest.mark.asyncio
@@ -42,7 +89,7 @@ async def test_check_duplicate_success(mock_create_log, mock_service):
     req = DuplicateCheckRequest(file_hash=FILE_HASH, entity_id=ENTITY_ID)
 
     response = await check_duplicate(
-        body=req, service=mock_service, current_user_id=_DUMMY_USER_ID
+        payload=req, service=mock_service, current_user_id=_DUMMY_USER_ID
     )
 
     assert response.message == "Not a duplicate"
@@ -60,7 +107,7 @@ async def test_check_duplicate_app_exception(mock_create_log, mock_service):
     req = DuplicateCheckRequest(file_hash=FILE_HASH, entity_id=ENTITY_ID)
 
     with pytest.raises(AppException) as excinfo:
-        await check_duplicate(body=req, service=mock_service, current_user_id=_DUMMY_USER_ID)
+        await check_duplicate(payload=req, service=mock_service, current_user_id=_DUMMY_USER_ID)
 
     assert excinfo.value.status_code == 400
     mock_create_log.assert_called_once()
@@ -73,7 +120,7 @@ async def test_check_duplicate_generic_exception(mock_create_log, mock_service):
     req = DuplicateCheckRequest(file_hash=FILE_HASH, entity_id=ENTITY_ID)
 
     with pytest.raises(AppException) as excinfo:
-        await check_duplicate(body=req, service=mock_service, current_user_id=_DUMMY_USER_ID)
+        await check_duplicate(payload=req, service=mock_service, current_user_id=_DUMMY_USER_ID)
 
     assert excinfo.value.status_code == 500
     mock_create_log.assert_called_once()
@@ -282,7 +329,7 @@ async def test_check_duplicate_create_log_entry_fails(mock_create_log, mock_serv
     req = DuplicateCheckRequest(file_hash=FILE_HASH, entity_id=ENTITY_ID)
 
     response = await check_duplicate(
-        body=req, service=mock_service, current_user_id=_DUMMY_USER_ID
+        payload=req, service=mock_service, current_user_id=_DUMMY_USER_ID
     )
     assert response.data.is_duplicate is False
 
@@ -368,21 +415,44 @@ async def test_list_documents_generic_exception(mock_service):
     assert excinfo.value.code == "DOCUMENT_LIST_FAILED"
 
 
-# ---------------------------------------------------------------------------
+def test_check_duplicate_via_testclient_flat_body(test_client, mock_service):
+    mock_service.check_duplicate.return_value = DuplicateCheckResponse(
+        is_duplicate=False, message="Not a duplicate"
+    )
+
+    response = test_client.post(
+        "/check-duplicate",
+        json={"file_hash": FILE_HASH, "entity_id": VALID_ENTITY_UUID},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["data"]["is_duplicate"] is False
+    mock_service.check_duplicate.assert_called_once_with(
+        file_hash=FILE_HASH, entity_id=VALID_ENTITY_UUID
+    )
+
+
+def test_list_documents_via_testclient_str_conversion(test_client, mock_service):
+    mock_service.list_documents.return_value = DocumentListResponse(
+        entity_id=VALID_ENTITY_UUID, documents=[]
+    )
+
+    response = test_client.get(f"/documents?entity_id={VALID_ENTITY_UUID}")
+
+    assert response.status_code == 200
+    called_entity_id = mock_service.list_documents.call_args.kwargs["entity_id"]
+    assert isinstance(called_entity_id, str)
+    assert called_entity_id == VALID_ENTITY_UUID
+
+
 # ---------------------------------------------------------------------------
 # delete_document endpoint (archiving)
 # ---------------------------------------------------------------------------
-
-from app.api.v1.endpoints.file_operations import (  # noqa: E402
-    delete_document as delete_document_endpoint,
-)
-from app.core.exceptions import ResourceNotFoundError  # noqa: E402
 
 
 @patch("app.utils.audit_log.create_log_entry")
 @pytest.mark.asyncio
 async def test_delete_document_endpoint_success(mock_create_log, mock_service):
-    """Happy path: service.delete_document succeeds → 200 with document_id and archived message."""
     mock_service.delete_document.return_value = None
     doc_id = uuid.UUID("12345678-1234-5678-1234-567812345678")
     ent_id = uuid.UUID("87654321-4321-8765-4321-876543218765")
@@ -405,7 +475,6 @@ async def test_delete_document_endpoint_success(mock_create_log, mock_service):
 @patch("app.utils.audit_log.create_log_entry")
 @pytest.mark.asyncio
 async def test_delete_document_endpoint_not_found(mock_create_log, mock_service):
-    """Document not found → ResourceNotFoundError propagates (404)."""
     mock_service.delete_document.side_effect = ResourceNotFoundError("Document not found.")
     doc_id = uuid.UUID("12345678-1234-5678-1234-567812345678")
     ent_id = uuid.UUID("87654321-4321-8765-4321-876543218765")
@@ -425,7 +494,6 @@ async def test_delete_document_endpoint_not_found(mock_create_log, mock_service)
 @patch("app.utils.audit_log.create_log_entry")
 @pytest.mark.asyncio
 async def test_delete_document_endpoint_archive_failure(mock_create_log, mock_service):
-    """DB archive fails → AppException with DOCUMENT_ARCHIVE_FAILED propagates."""
     mock_service.delete_document.side_effect = AppException(
         code="DOCUMENT_ARCHIVE_FAILED",
         message="Unable to archive document.",
@@ -449,7 +517,6 @@ async def test_delete_document_endpoint_archive_failure(mock_create_log, mock_se
 @patch("app.utils.audit_log.create_log_entry")
 @pytest.mark.asyncio
 async def test_delete_document_endpoint_generic_exception(mock_create_log, mock_service):
-    """Unexpected exception → wrapped as DOCUMENT_ARCHIVE_FAILED by @audit_log."""
     mock_service.delete_document.side_effect = Exception("Unexpected")
     doc_id = uuid.UUID("12345678-1234-5678-1234-567812345678")
     ent_id = uuid.UUID("87654321-4321-8765-4321-876543218765")
@@ -467,9 +534,6 @@ async def test_delete_document_endpoint_generic_exception(mock_create_log, mock_
 
 
 def test_file_operations_router_mounted():
-    """Verify that file operations routes are accessible"""
-    from app.api.v1.router import api_router
-
     paths = [route.path for route in api_router.routes]
 
     # Verify top-level file operation routes
