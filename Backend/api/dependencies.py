@@ -26,6 +26,7 @@ from app.database.access_scope_db import (
 )
 from app.database.crud_test_cases import (
     get_project_id_for_user_story,
+    get_project_ids_for_story_ids,
     get_project_ids_for_test_case_ids,
 )
 from app.database.users_db import create_user_on_signup, get_user_by_email
@@ -180,101 +181,6 @@ def require_visible_project(
             status_code=403,
         )
     return project_id
-
-
-# def require_visible_project_from_jira_request(
-#     request: RequestModel,
-#     current_user_id: uuid.UUID = Depends(get_current_user_id),
-#     db: Session = Depends(get_db),
-# ) -> RequestModel:
-#     visible_ids = get_visible_project_ids(db, current_user_id)
-#     if visible_ids is not None and request.projectId not in visible_ids:
-#         logger.warning(
-#             "project_access_denied",
-#             extra={"user_id": str(current_user_id), "project_id": str(request.projectId)},
-#         )
-#         raise AppException(
-#             code="FORBIDDEN",
-#             message="You do not have access to this project.",
-#             status_code=403,
-#         )
-#     return request
-
-
-# def require_visible_project_from_test_case_status_payload(
-#     payload: UpdateTestCasesStatusByIdsRequest,
-#     current_user_id: uuid.UUID = Depends(get_current_user_id),
-#     db: Session = Depends(get_db),
-# ) -> UpdateTestCasesStatusByIdsRequest:
-#     visible_ids = get_visible_project_ids(db, current_user_id)
-#     if visible_ids is None:
-#         return payload
-
-#     actual_project_ids = get_project_ids_for_test_case_ids(db, payload.ids)
-#     disallowed = actual_project_ids - visible_ids
-#     if disallowed:
-#         logger.warning(
-#             "project_access_denied",
-#             extra={
-#                 "user_id": str(current_user_id),
-#                 "project_ids": [str(pid) for pid in disallowed],
-#             },
-#         )
-#         raise AppException(
-#             code="FORBIDDEN",
-#             message="You do not have access to one or more of these test cases.",
-#             status_code=403,
-#         )
-
-#     if payload.project_id is not None and payload.project_id not in visible_ids:
-#         logger.warning(
-#             "project_access_denied",
-#             extra={"user_id": str(current_user_id), "project_id": str(payload.project_id)},
-#         )
-#         raise AppException(
-#             code="FORBIDDEN",
-#             message="You do not have access to this project.",
-#             status_code=403,
-#         )
-#     return payload
-
-
-# def require_visible_project_from_story_save_payload(
-#     payload: ImportStoriesRequest,
-#     current_user_id: uuid.UUID = Depends(get_current_user_id),
-#     db: Session = Depends(get_db),
-# ) -> ImportStoriesRequest:
-#     visible_ids = get_visible_project_ids(db, current_user_id)
-#     if visible_ids is not None and payload.project_id not in visible_ids:
-#         logger.warning(
-#             "project_access_denied",
-#             extra={"user_id": str(current_user_id), "project_id": str(payload.project_id)},
-#         )
-#         raise AppException(
-#             code="FORBIDDEN",
-#             message="You do not have access to this project.",
-#             status_code=403,
-#         )
-#     return payload
-
-
-# def require_visible_project_from_story_status_lookup_payload(
-#     payload: StoryStatusLookupRequest,
-#     current_user_id: uuid.UUID = Depends(get_current_user_id),
-#     db: Session = Depends(get_db),
-# ) -> StoryStatusLookupRequest:
-#     visible_ids = get_visible_project_ids(db, current_user_id)
-#     if visible_ids is not None and payload.project_id not in visible_ids:
-#         logger.warning(
-#             "project_access_denied",
-#             extra={"user_id": str(current_user_id), "project_id": str(payload.project_id)},
-#         )
-#         raise AppException(
-#             code="FORBIDDEN",
-#             message="You do not have access to this project.",
-#             status_code=403,
-#         )
-#     return payload
 
 
 def _authorize_for_project(
@@ -506,11 +412,10 @@ def _authorize_for_entity(
     visible_programme_ids = get_visible_programme_ids(db, current_user.id)
     visible_project_ids = get_visible_project_ids(db, current_user.id)
 
-    visible = (
-        (visible_client_ids or set())
-        | (visible_programme_ids or set())
-        | (visible_project_ids or set())
-    )
+    if visible_client_ids is None or visible_programme_ids is None or visible_project_ids is None:
+        return
+
+    visible = visible_client_ids | visible_programme_ids | visible_project_ids
     if entity_id not in visible:
         logger.warning(
             "entity_access_denied",
@@ -620,6 +525,23 @@ def require_project_permission_from_story_edit_log_payload(
             authorizer=authorizer,
             db=db,
         )
+        story_ids = [record.storyId for record in payload.edit_log]
+        actual_project_ids = get_project_ids_for_story_ids(db, story_ids)
+        foreign_ids = actual_project_ids - {payload.project_id}
+        if foreign_ids:
+            logger.warning(
+                "story_edit_log_project_mismatch",
+                extra={
+                    "user_id": str(current_user.id),
+                    "declared_project_id": str(payload.project_id),
+                    "foreign_project_ids": [str(p) for p in foreign_ids],
+                },
+            )
+            raise AppException(
+                code="FORBIDDEN",
+                message="One or more stories do not belong to the given project.",
+                status_code=403,
+            )
         return payload
 
     return dependency

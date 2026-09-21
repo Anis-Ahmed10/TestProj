@@ -389,3 +389,26 @@ def get_project_id_for_user_story(db: Session, user_story_id: str) -> uuid.UUID 
         .first()
     )
     return row[0] if row else None
+
+
+def get_project_ids_for_story_ids(db: Session, story_ids: list[str]) -> set[uuid.UUID]:
+    """Resolve the distinct set of project ids that own the given user stories."""
+    if not story_ids:
+        return set()
+
+    try:
+        rows = (
+            db.query(Epic.project_id)
+            .join(UserStory, UserStory.epic_id == Epic.epic_key)
+            .filter(UserStory.story_key.in_(story_ids))
+            .distinct()
+            .all()
+        )
+        return {row[0] for row in rows if row[0] is not None}
+    except Exception as exc:
+        logger.error(
+            "Failed to resolve project ids for story_ids=%s: %s",
+            story_ids,
+            exc,
+        )
+        raise

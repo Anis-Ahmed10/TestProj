@@ -434,6 +434,10 @@ export default function OutputPanel({
   const handleStatusChange = useCallback(
     async (testCaseId: string, newStatus: TestCaseStatus) => {
       if (pushedTestCaseIds.has(testCaseId)) return;
+      if (!projectId) {
+        message.error("Select a project first.");
+        return;
+      }
       const prevStatus = getStatus(testCaseId);
 
       latestStatusRef.current[testCaseId] = newStatus;
@@ -459,7 +463,7 @@ export default function OutputPanel({
           return;
         }
 
-        await updateTestCaseStatus([testCaseId], newStatus);
+        await updateTestCaseStatus([testCaseId], newStatus, projectId);
       };
 
       const promise = performUpdate();
@@ -484,7 +488,7 @@ export default function OutputPanel({
         }
       }
     },
-    [dispatch, getStatus, message, pushedTestCaseIds],
+    [dispatch, getStatus, message, projectId, pushedTestCaseIds],
   );
 
   const handleBulkApprove = useCallback(
@@ -493,6 +497,10 @@ export default function OutputPanel({
         (id) => getStatus(id) === "pending" && !pushedTestCaseIds.has(id),
       );
       if (pendingIds.length === 0) return;
+      if (!projectId) {
+        message.error("Select a project first.");
+        return;
+      }
 
       const prevStatuses = pendingIds.map((id) => ({
         id,
@@ -526,7 +534,7 @@ export default function OutputPanel({
         );
         if (targetIds.length === 0) return;
 
-        await updateTestCaseStatus(targetIds, "approved");
+        await updateTestCaseStatus(targetIds, "approved", projectId);
       };
 
       const bulkPromise = performBulkUpdate();
@@ -553,7 +561,7 @@ export default function OutputPanel({
         });
       }
     },
-    [dispatch, getStatus, message, pushedTestCaseIds],
+    [dispatch, getStatus, message, projectId, pushedTestCaseIds],
   );
 
   const handleBulkArchive = useCallback(
@@ -562,6 +570,10 @@ export default function OutputPanel({
         (id) => getStatus(id) !== "archived" && !pushedTestCaseIds.has(id),
       );
       if (nonArchivedIds.length === 0) return;
+      if (!projectId) {
+        message.error("Select a project first.");
+        return;
+      }
 
       const prevStatuses = nonArchivedIds.map((id) => ({
         id,
@@ -595,7 +607,7 @@ export default function OutputPanel({
         );
         if (targetIds.length === 0) return;
 
-        await updateTestCaseStatus(targetIds, "archived");
+        await updateTestCaseStatus(targetIds, "archived", projectId);
       };
 
       const bulkPromise = performBulkUpdate();
@@ -622,7 +634,7 @@ export default function OutputPanel({
         });
       }
     },
-    [dispatch, getStatus, message, pushedTestCaseIds],
+    [dispatch, getStatus, message, projectId, pushedTestCaseIds],
   );
 
   const handleBulkRestore = useCallback(
@@ -631,6 +643,10 @@ export default function OutputPanel({
         (id) => getStatus(id) === "archived" && !pushedTestCaseIds.has(id),
       );
       if (archivedIds.length === 0) return;
+      if (!projectId) {
+        message.error("Select a project first.");
+        return;
+      }
 
       const prevStatuses = archivedIds.map((id) => ({
         id,
@@ -664,7 +680,7 @@ export default function OutputPanel({
         );
         if (targetIds.length === 0) return;
 
-        await updateTestCaseStatus(targetIds, "pending");
+        await updateTestCaseStatus(targetIds, "pending", projectId);
       };
 
       const bulkPromise = performBulkUpdate();
@@ -691,7 +707,7 @@ export default function OutputPanel({
         });
       }
     },
-    [dispatch, getStatus, message, pushedTestCaseIds],
+    [dispatch, getStatus, message, projectId, pushedTestCaseIds],
   );
 
   /* ── Expand toggle (test case) ── */

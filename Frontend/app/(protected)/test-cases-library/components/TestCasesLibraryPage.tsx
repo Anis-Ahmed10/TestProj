@@ -482,13 +482,17 @@ export default function TestCasesLibraryPage() {
   const handleApprove = useCallback(
     async (ids: string[]) => {
       if (ids.length === 0 || approvingRef.current) return;
+      if (!selectedProjectId) {
+        message.error("Select a project first.");
+        return;
+      }
       approvingRef.current = true;
       setApproving(true);
       try {
         const result = await updateTestCaseStatus(
           ids,
           TEST_CASE_STATUS.APPROVED,
-          selectedProjectId || undefined,
+          selectedProjectId,
         );
 
         // Determine which IDs actually succeeded based strictly on backend results

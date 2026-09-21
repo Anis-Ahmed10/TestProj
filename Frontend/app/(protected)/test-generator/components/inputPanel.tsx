@@ -946,6 +946,10 @@ export default function InputPanel({
 
       // Phase 2: save edit log after stories are in DB
       if (storyChanges.size > 0) {
+        if (!selectedProject) {
+          message.error("Select a project first.");
+          return;
+        }
         const editLog: StoryEditRecord[] = [];
         const editedAt = new Date().toISOString();
         tableData.forEach((group) => {
@@ -963,7 +967,7 @@ export default function InputPanel({
           });
         });
         try {
-          await saveStoryEditLog(editLog);
+          await saveStoryEditLog(editLog, selectedProject.id);
         } catch (err) {
           console.error(
             "Story edit log could not be saved after retries:",

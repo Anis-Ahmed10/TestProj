@@ -10,6 +10,8 @@ from app.api.dependencies import (
     get_current_user_id,
     get_file_operations_service,
     require_entity_permission,
+    require_entity_permission_from_confirm_upload_payload,
+    require_entity_permission_from_duplicate_check_payload,
     require_permission,
 )
 from app.components.authorizer import Permission
@@ -36,7 +38,9 @@ router = APIRouter(tags=["File Operations"])
     response_model=SuccessResponse[DuplicateCheckResponse],
     response_model_exclude_none=True,
     summary="Check if a file already exists by its SHA-256 hash",
-    dependencies=[Depends(require_permission(Permission.DOCUMENT_UPLOAD))],
+    dependencies=[
+        Depends(require_entity_permission_from_duplicate_check_payload(Permission.DOCUMENT_UPLOAD))
+    ],
 )
 @audit_log(
     service="file_operations",
@@ -86,7 +90,7 @@ async def generate_presigned_url(
     response_model=SuccessResponse[DocumentListResponse],
     response_model_exclude_none=True,
     summary="List documents uploaded for an entity (client, programme, or project)",
-    dependencies=[Depends(require_permission(Permission.LIST_DOCUMENTS))],
+    dependencies=[Depends(require_entity_permission(Permission.LIST_DOCUMENTS))],
 )
 @audit_log(
     service="file_operations",
@@ -97,7 +101,7 @@ async def generate_presigned_url(
     error_message="Unable to list documents right now.",
 )
 async def list_documents(
-    entity_id: str,
+    entity_id: UUID,
     service: Annotated[FileOperationsService, Depends(get_file_operations_service)],
     current_user_id: Annotated[UUID, Depends(get_current_user_id)],
 ):
@@ -141,7 +145,9 @@ async def delete_document(
     response_model=SuccessResponse[ConfirmUploadResponse],
     response_model_exclude_none=True,
     summary="Confirm upload and store RAG chunks",
-    dependencies=[Depends(require_permission(Permission.DOCUMENT_UPLOAD))],
+    dependencies=[
+        Depends(require_entity_permission_from_confirm_upload_payload(Permission.DOCUMENT_UPLOAD))
+    ],
 )
 @audit_log(service="file_operations", method="POST", endpoint="/confirm-upload")
 async def confirm_upload(

@@ -50,13 +50,14 @@ async function withRetry<T>(
 
 export async function saveStoryEditLog(
   editLog: StoryEditRecord[],
+  projectId: string,
 ): Promise<void> {
   if (editLog.length === 0) return;
   await withRetry(
     () =>
       apiRequest<unknown>("/api/v1/database/story-edit-log", {
         method: "POST",
-        body: JSON.stringify({ edit_log: editLog }),
+        body: JSON.stringify({ edit_log: editLog, project_id: projectId }),
       }),
     2,
     1000,

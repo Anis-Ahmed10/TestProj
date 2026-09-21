@@ -12,7 +12,7 @@ import { flattenTestCases } from "@/utils/testcaseGenerator/testcaseGeneratorHel
 export async function updateTestCaseStatus(
   testCaseIds: string[],
   status: TestCaseStatus,
-  projectId?: string,
+  projectId: string,
 ): Promise<BulkUpdateTestCaseStatusResponse | undefined> {
   const payload = await apiRequest<{
     success: boolean;
@@ -23,7 +23,7 @@ export async function updateTestCaseStatus(
     body: JSON.stringify({
       testCaseIds,
       status,
-      ...(projectId ? { projectId } : {}),
+      projectId,
     }),
   });
 
